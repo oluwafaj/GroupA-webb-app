@@ -55,7 +55,7 @@ app.MapGet("/contact", () => Results.Content(@"
     <html>
     <body style='font-family: sans-serif; text-align: center; padding: 50px;'>
         <h1>Contact Us</h1>
-        <p>Email: <b>connect@techunity.africa</b></p>
+        <p>Email: <b>connect@techunity.africablackcommunity.intech</b></p>
         <p>Join our community hubs in Lagos, Nairobi,chad, Ghana,sierra leone,egypt, Ivory coast,south africa,mali,rwanda,and Accra.</p>
         <a href='/'>Back to Login</a>
     </body>
