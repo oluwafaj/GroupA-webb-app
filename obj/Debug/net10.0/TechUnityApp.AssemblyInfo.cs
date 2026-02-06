@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechUnityApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6177210e445580726387533ad6fb45388dc982c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07635dcaa3334243d8966ba7732e8beddc6251f6")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechUnityApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechUnityApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
