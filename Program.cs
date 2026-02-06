@@ -15,64 +15,84 @@ app.MapGet("/", () => Results.Content(@$"
 <head>
     <meta charset=""UTF-8"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>TechUnity Portal</title>
+    <title>TechUnity | African Excellence in Tech</title>
     <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background: #0a0a0f; color: white; text-align: center; padding: 50px; }}
-        .auth-box {{ background: #1a1a24; padding: 30px; border-radius: 15px; display: inline-block; border: 1px solid #f39c12; width: 350px; }}
-        .dashboard {{ display: none; background: #1a1a24; padding: 40px; border-radius: 15px; border: 2px solid #3498db; }}
-        input {{ width: 90%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #0a0a0f; color: white; }}
-        button {{ background: #f39c12; color: #0a0a0f; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 97%; }}
-        .hero-img {{ width: 100%; max-width: 500px; border-radius: 15px; border: 2px solid #f39c12; margin-bottom: 20px; }}
+        :root {{ --primary: #f39c12; --secondary: #3498db; --dark: #0a0a0f; --card: #1a1a24; }}
+        body {{ font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; margin: 0; padding: 0; }}
+        
+        /* Navigation Bar */
+        nav {{ background: #111; padding: 1rem; display: flex; justify-content: center; gap: 30px; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }}
+        nav a {{ color: white; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.3s; }}
+        nav a:hover {{ color: var(--primary); }}
+
+        .container {{ max-width: 900px; margin: auto; padding: 40px 20px; }}
+        .section {{ display: none; animation: fadeIn 0.5s; }}
+        .active {{ display: block; }}
+        
+        @keyframes fadeIn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
+
+        .hero-img {{ width: 100%; max-width: 600px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; }}
+        
+        /* Hub Cards Style */
+        .hubs-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }}
+        .hub-card {{ background: var(--card); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; }}
     </style>
 </head>
 <body>
-    <img src=""/images/students.jpg"" alt=""Image not found in wwwroot/images/"" class=""hero-img"">
 
-    <div id=""login-section"" class=""auth-box"">
-        <h2>TechUnity Login</h2>
-        <form id=""authForm"">
-            <input type=""text"" id=""username"" placeholder=""Username"" required>
-            <input type=""password"" id=""password"" placeholder=""Password"" required>
-            <button type=""submit"">Enter Platform</button>
-        </form>
-        <div id=""message"" style=""margin-top:15px; color:#f39c12;""></div>
-    </div>
+    <nav>
+        <a onclick=""showSection('home')"">Home</a>
+        <a onclick=""showSection('about')"">About Us</a>
+        <a onclick=""showSection('contact')"">Contact</a>
+    </nav>
 
-    <div id=""dashboard-section"" class=""dashboard"">
-        <h1 style=""color:#3498db"">Welcome, FAJ Admin</h1>
-        <p>System Status: <span style=""color:#2ecc71"">Online</span></p>
-        <div style=""display: flex; justify-content: space-around; margin-top: 20px;"">
-            <div style=""padding:20px; border:1px solid #333;"">Total Students<br><strong>1,240</strong></div>
-            <div style=""padding:20px; border:1px solid #333;"">Active Mentors<br><strong>85</strong></div>
+    <div class=""container"">
+        <div id=""home"" class=""section active"">
+            <img src=""/images/students.jpg"" alt=""Black African Students in Tech"" class=""hero-img"">
+            <h1 style=""color: var(--primary);"">Empowering Black African Students</h1>
+            <p style=""font-size: 1.2rem; line-height: 1.6;"">
+                Welcome to TechUnity. We are a premier global community dedicated to bridging the gap for African talent in the digital age.
+            </p>
+            <button onclick=""showSection('about')"" style=""background: var(--primary); padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"">Explore Our Mission</button>
         </div>
-        <button onclick=""location.reload()"" style=""background:#e74c3c; width:auto; margin-top:20px;"">Logout</button>
+
+        <div id=""about"" class=""section"">
+            <h2 style=""color: var(--secondary);"">Our Mission</h2>
+            <p style=""text-align: left; line-height: 1.8;"">
+                TechUnity serves as a bridge, bringing <b>Black African students</b> together through technology. 
+                We believe that by providing access to Azure cloud resources, expert mentorship, and a global network, 
+                we can foster the next generation of African tech leaders.
+            </p>
+            
+            <h3>Our Global Community Hubs</h3>
+            <div class=""hubs-grid"">
+                <div class=""hub-card"">🇳🇬<br>Lagos</div>
+                <div class=""hub-card"">🇰🇪<br>Nairobi</div>
+                <div class=""hub-card"">🇿🇦<br>Cape Town</div>
+                <div class=""hub-card"">🇬🇭<br>Accra</div>
+            </div>
+        </div>
+
+        <div id=""contact"" class=""section"">
+            <h2 style=""color: var(--primary);"">Get In Touch</h2>
+            <p>Ready to join the community or need technical support?</p>
+            <div style=""background: var(--card); padding: 20px; border-radius: 10px;"">
+                <p>📧 Email: <b>connect@techunity.africa</b></p>
+                <p>📍 Location: Global Virtual Community</p>
+                <p>Support Hours: 24/7 via Community Discord</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.getElementById('authForm').onsubmit = async (e) => {{
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            const response = await fetch('/login', {{
-                method: 'POST',
-                headers: {{ 'Content-Type': 'application/json' }},
-                body: JSON.stringify({{ Username: user, Password: pass }})
-            }});
-
-            const result = await response.text();
-            if (response.ok && result.includes('FAJAdministrator')) {{
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('dashboard-section').style.display = 'block';
-            }} else {{
-                document.getElementById('message').innerText = result;
-            }}
-        }};
+        function showSection(id) {{
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }}
     </script>
 </body>
 </html>
 ", "text/html"));
-
 // Keep the same /login and /register endpoints from before
 app.MapPost("/login", async ([FromBody] User loginAttempt, TechUnityDbContext db) => {
     if (loginAttempt.Username == "oluwafaj" && loginAttempt.Password == "Aeroaj16") {
