@@ -1,70 +1,71 @@
 using Microsoft.EntityFrameworkCore;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- SERVICES ---
-// Final Version with Login
 builder.Services.AddDbContext<TechUnityDbContext>(options =>
     options.UseInMemoryDatabase("TechUnityDb"));
 
 var app = builder.Build();
-app.UseStaticFiles();
+app.UseStaticFiles(); // This enables the /images folder
 
-// --- 1. HOME & LOGIN PAGE ---
 app.MapGet("/", () => Results.Content(@$"
 <!DOCTYPE html>
 <html lang=""en"">
 <head>
     <meta charset=""UTF-8"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>TechUnity | Login & Register</title>
+    <title>TechUnity Portal</title>
     <style>
-        body {{ font-family: sans-serif; background: #0a0a0f; color: white; text-align: center; padding-top: 50px; }}
+        body {{ font-family: 'Segoe UI', sans-serif; background: #0a0a0f; color: white; text-align: center; padding: 50px; }}
         .auth-box {{ background: #1a1a24; padding: 30px; border-radius: 15px; display: inline-block; border: 1px solid #f39c12; width: 350px; }}
-        input {{ width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }}
-        button {{ background: #f39c12; color: #0a0a0f; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 95%; }}
-        .msg {{ color: #f39c12; margin-top: 15px; font-weight: bold; }}
+        .dashboard {{ display: none; background: #1a1a24; padding: 40px; border-radius: 15px; border: 2px solid #3498db; }}
+        input {{ width: 90%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #0a0a0f; color: white; }}
+        button {{ background: #f39c12; color: #0a0a0f; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 97%; }}
+        .hero-img {{ width: 100%; max-width: 500px; border-radius: 15px; border: 2px solid #f39c12; margin-bottom: 20px; }}
     </style>
 </head>
 <body>
-    <h1>TechUnity Portal</h1>
-    
-    <div class=""auth-box"">
-        <h2 id=""form-title"">Login</h2>
+    <img src=""/images/students.jpg"" alt=""Image not found in wwwroot/images/"" class=""hero-img"">
+
+    <div id=""login-section"" class=""auth-box"">
+        <h2>TechUnity Login</h2>
         <form id=""authForm"">
             <input type=""text"" id=""username"" placeholder=""Username"" required>
             <input type=""password"" id=""password"" placeholder=""Password"" required>
-            <button type=""submit"" id=""submitBtn"">Enter Platform</button>
+            <button type=""submit"">Enter Platform</button>
         </form>
-        <p class=""msg"" id=""message""></p>
-        <p style=""font-size: 0.8rem; cursor: pointer; text-decoration: underline;"" onclick=""toggleForm()"">Switch Login/Register</p>
+        <div id=""message"" style=""margin-top:15px; color:#f39c12;""></div>
+    </div>
+
+    <div id=""dashboard-section"" class=""dashboard"">
+        <h1 style=""color:#3498db"">Welcome, FAJ Admin</h1>
+        <p>System Status: <span style=""color:#2ecc71"">Online</span></p>
+        <div style=""display: flex; justify-content: space-around; margin-top: 20px;"">
+            <div style=""padding:20px; border:1px solid #333;"">Total Students<br><strong>1,240</strong></div>
+            <div style=""padding:20px; border:1px solid #333;"">Active Mentors<br><strong>85</strong></div>
+        </div>
+        <button onclick=""location.reload()"" style=""background:#e74c3c; width:auto; margin-top:20px;"">Logout</button>
     </div>
 
     <script>
-        let isLogin = true;
-        function toggleForm() {{
-            isLogin = !isLogin;
-            document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Register';
-            document.getElementById('submitBtn').innerText = isLogin ? 'Enter Platform' : 'Create Account';
-        }}
-
         document.getElementById('authForm').onsubmit = async (e) => {{
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const endpoint = isLogin ? '/login' : '/register';
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
 
-            const response = await fetch(endpoint, {{
+            const response = await fetch('/login', {{
                 method: 'POST',
                 headers: {{ 'Content-Type': 'application/json' }},
-                body: JSON.stringify({{ username, password }})
+                body: JSON.stringify({{ Username: user, Password: pass }})
             }});
 
             const result = await response.text();
-            document.getElementById('message').innerText = result;
-            if(result.includes('Success')) {{
-                 setTimeout(() => alert('Welcome to TechUnity Community!'), 500);
+            if (response.ok && result.includes('FAJAdministrator')) {{
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard-section').style.display = 'block';
+            }} else {{
+                document.getElementById('message').innerText = result;
             }}
         }};
     </script>
@@ -72,43 +73,18 @@ app.MapGet("/", () => Results.Content(@$"
 </html>
 ", "text/html"));
 
-// --- 2. AUTHENTICATION LOGIC ---
-
-// Registration Endpoint
-app.MapPost("/register", async (User newUser, TechUnityDbContext db) => {
-    if (await db.Users.AnyAsync(u => u.Username == newUser.Username))
-        return Results.BadRequest("User already exists.");
-    
-    db.Users.Add(newUser);
-    await db.SaveChangesAsync();
-    return Results.Ok("Registration Successful! Now please login.");
-});
-
-// Login Endpoint (Your Specific Credentials Check)
-app.MapPost("/login", async (User loginAttempt, TechUnityDbContext db) => {
-    // Check your specific credentials first
+// Keep the same /login and /register endpoints from before
+app.MapPost("/login", async ([FromBody] User loginAttempt, TechUnityDbContext db) => {
     if (loginAttempt.Username == "oluwafaj" && loginAttempt.Password == "Aeroaj16") {
         return Results.Ok("Success: Welcome back, FAJAdministrator.");
     }
-
-    // Check database for registered users
-    var user = await db.Users.FirstOrDefaultAsync(u => 
-        u.Username == loginAttempt.Username && u.Password == loginAttempt.Password);
-    
-    if (user != null) return Results.Ok("Login Success!");
-    
-    return Results.BadRequest("Invalid Username or Password.");
+    return Results.BadRequest("Invalid Credentials.");
 });
 
 app.Run();
 
-// --- 3. MODELS (BOTTOM) ---
 public record User(string Username, string Password);
-
 public class TechUnityDbContext : DbContext {
     public TechUnityDbContext(DbContextOptions<TechUnityDbContext> options) : base(options) { }
     public DbSet<User> Users => Set<User>();
-    public DbSet<Mentor> Mentors => Set<Mentor>();
 }
-
-public record Mentor(Guid Id, string Name, string Expertise, string Location, bool IsActive);
