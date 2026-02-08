@@ -61,7 +61,7 @@ app.MapGet("/", () => Results.Content(@$"
             <p style=""text-align: left; line-height: 1.8;"">
                 TechUnity serves as a bridge, bringing <b>Black African students</b> together through technology. 
                 We believe that by providing access to Azure cloud resources, expert mentorship, and a global network, 
-                we can foster the next generation of African tech leaders.
+                we can foster the next generation of African tech leaders thank you for the encouragement Bethel.
             </p>
             
             <h3>Our Global Community Hubs</h3>
